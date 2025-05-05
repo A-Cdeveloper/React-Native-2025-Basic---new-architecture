@@ -3,7 +3,7 @@ import { images } from "@/constants/images";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Image, ImageBackground, Text } from "react-native";
-
+import "react-native-url-polyfill/auto";
 const TabIcon = ({
   focused,
   title,

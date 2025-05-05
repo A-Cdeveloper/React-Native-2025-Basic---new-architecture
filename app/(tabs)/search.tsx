@@ -1,14 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/searchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { useFetch } from "@/hooks/useFetch";
 import { fetchMovies } from "@/services/api";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
+import { updateSearchCount } from "@/services/appwriter";
+import { useCallback, useEffect, useState } from "react";
+
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   /////////////
   const {
     data: movies,
@@ -25,13 +36,31 @@ export default function Search() {
       } else {
         reset();
       }
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
+  useEffect(() => {
+    if (movies?.length > 0 && movies?.[0]) {
+      updateSearchCount(searchTerm, movies?.[0]);
+    }
+  }, [movies]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    const func = async () => {
+      if (searchTerm.trim() !== "") {
+        await refetch();
+      }
+    };
+
+    func();
+    setRefreshing(false);
+  }, []);
+
   ///////////////////
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 bg-primary pb-32">
       <Image source={images.bg} className="w-full h-full z-0 absolute" />
       <Image source={icons.logo} className="w-12 h-10 mt-20 mb-10 mx-auto" />
       <SearchBar
@@ -51,11 +80,14 @@ export default function Search() {
           paddingRight: 5,
           marginBottom: 10,
         }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         className="mt-0 pb-32 px-5"
         scrollEnabled={true}
         horizontal={false}
         ListHeaderComponent={() => (
-          <View className="flex  justify-between flex-1 mb-7">
+          <View className="flex justify-between flex-1 mb-7">
             {loading && (
               <View className="flex-1 items-center justify-center">
                 <ActivityIndicator size="large" color="#ffff" />
@@ -66,13 +98,7 @@ export default function Search() {
                 <Text>Error {error.message} </Text>
               </View>
             )}
-            {!loading && !error && movies?.length === 0 && (
-              <View className="flex-1 items-center justify-center">
-                <Text className="text-white text-lg font-bold">
-                  No results found
-                </Text>
-              </View>
-            )}
+
             {movies?.length > 0 && searchTerm.trim().length > 0 && (
               <Text className="text-lg font-bold mt-10 mb-0 text-white">
                 Search results for:{" "}
@@ -81,6 +107,15 @@ export default function Search() {
                 </Text>
               </Text>
             )}
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <View className="flex-1 items-center justify-center">
+            <Text className="text-white text-lg font-bold">
+              {searchTerm.trim().length > 0
+                ? "No results found"
+                : "Search for movies"}
+            </Text>
           </View>
         )}
       />

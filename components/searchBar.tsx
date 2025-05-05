@@ -1,5 +1,5 @@
 import { icons } from "@/constants/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { Image, TextInput, View } from "react-native";
 
 const SearchBar = ({
@@ -13,10 +13,6 @@ const SearchBar = ({
   placeholder?: string;
   value?: string;
 }) => {
-  useEffect(() => {
-    console.log("Component re-rendered");
-  });
-
   return (
     <View className="flex-row items-center justify-between bg-dark-200 px-5 py-2 rounded-full">
       <Image
@@ -33,6 +29,7 @@ const SearchBar = ({
         value={value}
         onPressIn={onPress}
         onChangeText={onChangeText}
+        autoCorrect={false}
       />
     </View>
   );
