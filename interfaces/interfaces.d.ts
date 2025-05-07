@@ -4,6 +4,19 @@ interface Movie {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
+  budget: number;
+  revenue: number;
+  production_companies: {
+    id: number;
+    logo_path: string;
+    name: string;
+    origin_country: string;
+  }[];
+  homepage: string;
+  genres: {
+    id: number;
+    name: string;
+  }[];
   original_language: string;
   original_title: string;
   overview: string;
@@ -13,6 +26,7 @@ interface Movie {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  runtime: number;
 }
 
 interface TrendingMovie {

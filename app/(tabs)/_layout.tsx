@@ -17,7 +17,7 @@ const TabIcon = ({
     <ImageBackground
       source={focused ? images.highlight : null}
       className="min-w-[125px] w-full flex flex-row items-center justify-center 
-      mt-3 min-h-14 rounded-[52px] overflow-hidden"
+      mt-5 min-h-14 rounded-[52px] overflow-hidden"
     >
       <Image
         source={icon}

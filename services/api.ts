@@ -9,7 +9,11 @@ export const TMDB_CONFIG = {
 
 //const dalay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-export const fetchMovies = async ({ query }: { query: string }) => {
+export const fetchMovies = async ({
+  query,
+}: {
+  query: string;
+}): Promise<Movie[]> => {
   // await dalay(4000);
   const endpoint = query
     ? `${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
@@ -27,4 +31,28 @@ export const fetchMovies = async ({ query }: { query: string }) => {
   const data = await response.json();
 
   return data.results;
+};
+
+///////////////////////////////////////////////////
+export const fetchMovieDetails = async ({
+  movie_id,
+}: {
+  movie_id: string;
+}): Promise<Movie> => {
+  try {
+    const response = await fetch(`${TMDB_CONFIG.BASE_URL}/movie/${movie_id}`, {
+      method: "GET",
+      headers: TMDB_CONFIG.HEADERS,
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
